@@ -5,6 +5,9 @@ from .author import AuthorSerializer
 
 
 class BookManagementSerializer(serializers.ModelSerializer):
+    """
+    Book Management Serializer
+    """
     publisher = PublisherSerializer()
     author = AuthorSerializer()
 

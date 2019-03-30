@@ -3,6 +3,10 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Publisher(models.Model):
+    """
+    Publisher Model
+    """
+    # Publisher name
     name = models.CharField(_('publisher_name'), max_length=100)
 
     class Meta:
