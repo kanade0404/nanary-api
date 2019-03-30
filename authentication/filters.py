@@ -3,7 +3,10 @@ from users.models import User
 
 
 class AuthFilter(filters.FilterSet):
-    # メールアドレス完全一致
+    """
+    Authentication Filter
+    """
+    # email address
     email = filters.CharFilter(field_name='email', lookup_expr='exact')
 
     class Meta:

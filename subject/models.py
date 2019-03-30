@@ -5,9 +5,11 @@ from category.models import Category
 
 class Subject(models.Model):
     """
-    詳細な科目・専攻
+    Detail subject
     """
+    # Major name
     name = models.CharField(_('subject_name'), unique=True, max_length=50)
+    # Category number
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name=_('category_name'))
 
     class Meta:

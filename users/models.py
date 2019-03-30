@@ -6,7 +6,6 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import ugettext_lazy as _
 from authentication.models import Provider
 from logging import getLogger
-import traceback
 
 logger = getLogger(__name__)
 
@@ -17,7 +16,7 @@ class UserManager(BaseUserManager):
     """
     user_in_migrations = True
 
-    def _create_user(self, email, password, username, provider='nothing', **kwargs):
+    def _create_user(self, email, password, username, provider='nothing', icon_image='', **kwargs):
         if not email or email == '':
             raise ValueError('メールアドレスは必須です')
         if not password or password == '':
@@ -28,7 +27,8 @@ class UserManager(BaseUserManager):
             username=username,
             email=self.normalize_email(email),
             date_joined=timezone.now(),
-            provider=Provider.objects.get(provider_name__exact=provider)
+            provider=Provider.objects.get(provider_name__exact=provider),
+            icon_image=icon_image
         )
         user.set_password(password)
         try:

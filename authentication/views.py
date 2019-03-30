@@ -8,16 +8,27 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 
-# 認証ビューセット
 class AuthViewSet(viewsets.ModelViewSet):
+    """
+    Authentication ViewSet
+    """
     queryset = User.objects.filter(is_active=True).order_by('-date_joined')
     serializer_class = AuthSerializer
     filter_class = AuthFilter
 
 
-# トークン認証
 class CustomAuthToken(ObtainAuthToken):
+    """
+    Token Authentication ViewSet
+    """
     def post(self, request, *args, **kwargs):
+        """
+        Token Authentication
+        :param request: user info
+        :param args: other args
+        :param kwargs: extra args
+        :return: token and user info
+        """
         response = super(CustomAuthToken, self).post(request, *args, **kwargs)
         token = Token.objects.get(key=response.data['token'])
         user = User.objects.get(id=token.user_id)

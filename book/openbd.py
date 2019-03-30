@@ -10,6 +10,11 @@ class OpenBD:
         pass
 
     def get_json(self, isbn: str) -> dict:
+        """
+        find a book info by ISBN Code
+        :param isbn: ISBN Code
+        :return: A found book info if a book info is exist. A Empty Object unless a book info is not found.
+        """
         api_data = self.__call_api(isbn)
         if api_data == {}:
             return {}
@@ -34,16 +39,16 @@ class OpenBD:
 
     def modify_datetime(self, date: str) -> str:
         """
-        OpenBDのAPIで取得した出版日を整形する
-        :param date:
-        :return:
+        format a publish date that get by OpenBD API.
+        :param date: publish date
+        :return: a formated publish date
         """
         return date.replace('c', '')
 
     def clean_author(self, author: str) -> str:
         """
-        OpenBDのAPIで取得した著者名を修正
-        :param author:
-        :return:
+        fix an author name that get by OpenBD API.
+        :param author: an author name
+        :return: a fixed author name
         """
         return author.replace('／著', '')

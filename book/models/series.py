@@ -3,6 +3,10 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Series(models.Model):
+    """
+    Series Model
+    """
+    # Series name
     name = models.CharField(_('series_name'), max_length=100)
 
     class Meta:
