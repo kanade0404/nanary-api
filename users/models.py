@@ -1,10 +1,10 @@
 from django.db import models
+from django.core.mail import send_mail
 from django.utils import timezone
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import ugettext_lazy as _
-from authentication.models import Provider
+from .validators import UsernameValidator
 from logging import getLogger
 
 logger = getLogger(__name__)
@@ -16,7 +16,7 @@ class UserManager(BaseUserManager):
     """
     user_in_migrations = True
 
-    def _create_user(self, email, password, username, provider='nothing', icon_image='', **kwargs):
+    def _create_user(self, email, password, username, **kwargs):
         if not email or email == '':
             raise ValueError('メールアドレスは必須です')
         if not password or password == '':
@@ -26,9 +26,7 @@ class UserManager(BaseUserManager):
         user = self.model(
             username=username,
             email=self.normalize_email(email),
-            date_joined=timezone.now(),
-            provider=Provider.objects.get(provider_name__exact=provider),
-            icon_image=icon_image
+            date_joined=timezone.now()
         )
         user.set_password(password)
         try:
@@ -38,8 +36,8 @@ class UserManager(BaseUserManager):
         return user
 
     # ユーザー登録
-    def create_user(self, email, password, username, provider='nothing', **kwargs):
-        return self._create_user(email, password, username, provider)
+    def create_user(self, email, password, username, **kwargs):
+        return self._create_user(email, password, username)
 
     # スーパーユーザー登録
     def create_superuser(self, email, password, username, **kwargs):
@@ -57,10 +55,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     ユーザーモデル
     """
     # Emailアドレス
-    email = models.EmailField(_('email'), unique=True)
+    email = models.EmailField(_('email'), blank=True)
     # ユーザー名validator
-    # ASCIIUsernameValidatorだとアルファベットのみの登録になる
-    username_validator = UnicodeUsernameValidator()
+    username_validator = UsernameValidator()
     # ユーザー名
     username = models.CharField(
         _('username'),
@@ -68,12 +65,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         validators=[username_validator],
         unique=True
     )
+    display_username = models.CharField(
+        _('disp_username'),
+        max_length=50,
+        blank=True
+    )
     # プロフィール
     profile = models.CharField(_('profile'), blank=True, max_length=400)
     # アイコン画像
     icon_image = models.URLField(blank=True)
-    # プロバイダー
-    provider = models.ForeignKey(Provider, on_delete=models.CASCADE, default=1)
     # スタッフフラグ
     is_staff = models.BooleanField(
         _('is_staff'),
@@ -108,3 +108,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         db_table = 'users'
         swappable = 'AUTH_USER_MODEL'
+
+    def clean(self):
+        super().clean()
+        self.email = self.__class__.objects.normalize_email(self.email)
+
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        send_mail(subject, message, from_email, [self.email], **kwargs)

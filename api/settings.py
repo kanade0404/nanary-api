@@ -43,8 +43,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_auth',
-    'rest_auth.registration',
     'django_filters',
 
     'users.apps.UserConfig',
@@ -53,7 +51,6 @@ INSTALLED_APPS = [
     'category.apps.CategoryConfig',
     'comment.apps.CommentConfig',
     'question.apps.QuestionConfig',
-    'subject.apps.SubjectConfig',
 ]
 
 MIDDLEWARE = [

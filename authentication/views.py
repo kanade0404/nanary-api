@@ -1,6 +1,5 @@
 from .filters import AuthFilter
 from .serializers import AuthSerializer
-from users.serializers import UserSerializer
 from users.models import User
 from rest_framework import viewsets
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -32,5 +31,5 @@ class CustomAuthToken(ObtainAuthToken):
         response = super(CustomAuthToken, self).post(request, *args, **kwargs)
         token = Token.objects.get(key=response.data['token'])
         user = User.objects.get(id=token.user_id)
-        serializer = UserSerializer(user, many=False)
+        serializer = AuthSerializer(user, many=False)
         return Response({'token': token.key, 'user': serializer.data})
