@@ -35,12 +35,12 @@ class BookManagementViewSet(viewsets.ViewSet):
                 return Response(data, status.HTTP_200_OK)
             else:
                 book = Book.objects.filter(isbn=request.data['isbn']).get()
-                serializer = BookManagementSerializer(instance=book)
-                logger.debug('get book info from db', serializer.data)
-                return Response(serializer.data, status.HTTP_200_OK)
+                data = BookManagementSerializer(instance=book).data
+                logger.debug('get book info from db', data)
+                return Response(data, status.HTTP_200_OK)
         except Exception as e:
             logger.exception(f'Exception as BookManagementViewSet.list: {e}')
-            return Response(e, status.HTTP_400_BAD_REQUEST)
+            return Response({'error': e.args[0]}, status.HTTP_400_BAD_REQUEST)
 
     @transaction.atomic
     def create(self, request):
@@ -64,17 +64,16 @@ class BookManagementViewSet(viewsets.ViewSet):
             book.save()
             if request.data['series'] != '':
                 series = Series.objects.filter(name=request.data['series']).get()
-                #
-                # #
                 if len(series) == 0:
                     series = Series(name=request.data['series'])
                     series.save()
                 series_book = SeriesBook(book_id=book, series_id=series)
                 series_book.save()
+            serializer = BookManagementSerializer(book)
             logger.debug('create ' * is_create_publisher + f'publisher:{publisher}')
             logger.debug('create ' * is_create_author + f'author: {author}')
             logger.debug(f'create book: {book}')
         except RegisterError as e:
-            logger.exception(f'Exception at BookManagetViewSet.create: {e}')
+            logger.exception(f'Exception at BookManageViewSet.create: {e}')
             return Response(e, status.HTTP_400_BAD_REQUEST)
-        return Response(book, status.HTTP_201_CREATED)
+        return Response(serializer.data, status.HTTP_201_CREATED)

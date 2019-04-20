@@ -26,17 +26,25 @@ class UserManager(BaseUserManager):
         user = self.model(
             username=username,
             email=self.normalize_email(email),
+            display_username=username,
             date_joined=timezone.now()
         )
         user.set_password(password)
         try:
             user.save(using=self._db)
+            return user
         except Exception as e:
             logger.exception(f'Exception at UserManager._create_user: {e}')
-        return user
+            return None
 
     # ユーザー登録
     def create_user(self, email, password, username, **kwargs):
+        return self._create_user(email, password, username)
+
+    def create_staff_user(self, email, password, username):
+        return self._create_user(email, password, username)
+
+    def create_admin_user(self, email, password, username):
         return self._create_user(email, password, username)
 
     # スーパーユーザー登録
@@ -55,7 +63,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     ユーザーモデル
     """
     # Emailアドレス
-    email = models.EmailField(_('email'), blank=True)
+    email = models.EmailField(_('email'), unique=True)
     # ユーザー名validator
     username_validator = UsernameValidator()
     # ユーザー名
@@ -65,8 +73,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         validators=[username_validator],
         unique=True
     )
+    # 表示用ユーザー名
     display_username = models.CharField(
-        _('disp_username'),
+        _('display_username'),
         max_length=50,
         blank=True
     )
@@ -96,12 +105,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     # 登録日時
     date_joined = models.DateTimeField(_('date_joined'), default=timezone.now)
+    # 更新日時
+    date_updated = models.DateTimeField(_('date_updated'), default=timezone.now)
     # ユーザー名フィールド設定
-    USERNAME_FIELD = 'username'
-    # Eメールドレスフィールド設定
-    EMAIL_FIELD = 'email'
+    USERNAME_FIELD = 'email'
     # 必須フィールド設定
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = []
 
     objects = UserManager()
 

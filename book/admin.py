@@ -4,7 +4,6 @@ from .models.publisher import Publisher
 from .models.book import Book
 from .models.series import Series
 from .models.series_book import SeriesBook
-from subject.models import Subject, SubjectTag
 from category.models import Category, CategoryTag
 
 
@@ -40,14 +39,4 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(CategoryTag)
 class CategoryTagAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Subject)
-class SubjectAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(SubjectTag)
-class SubjectTagAdmin(admin.ModelAdmin):
     pass

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_jwt',
     'django_filters',
 
     'users.apps.UserConfig',
@@ -185,12 +186,12 @@ LOGGING = {
     },
     'handlers': {
         'console': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
         },
         'django.server': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'django.server',
         },
@@ -203,36 +204,36 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
+            'level': 'DEBUG',
         },
         'django.server': {
             'handlers': ['django.server'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False,
         },
         'django.db.backends': {
             'handles': ['console'],
-            'level': 'DEBUG'
+            'level': 'INFO'
         },
         'users': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False,
         },
         'dashboard': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False,
         },
         'authentication': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False,
         },
         'book': {
             'handlers': ['console'],
-            'level': 'INFO',
-            'propagete': False
+            'level': 'DEBUG',
+            'propagate': False
         },
     }
 }

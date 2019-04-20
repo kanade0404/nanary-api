@@ -9,7 +9,7 @@ from question.models import Question
 from logging import getLogger
 
 
-logget = getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class CommentViewSet(viewsets.ViewSet):
@@ -18,12 +18,21 @@ class CommentViewSet(viewsets.ViewSet):
     serializer_class = CommentSerializer
 
     def list(self, request):
-        comment = Comment.objects.all()
-        return Response(comment, status=status.HTTP_200_OK)
+        try:
+            comment = Comment.objects.all().get()
+            data = CommentSerializer(comment).data
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.exception(f'Exception: {e}')
+            return Response({'error': e.args[0]})
 
     def retrieve(self, request, pk=None):
-        comment = Comment.objects.get(pk=pk)
-        return Response(comment, status=status.HTTP_200_OK)
+        try:
+            comment = Comment.objects.get(pk=pk)
+            return Response(comment, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.exception(f'Exception: {e}')
+            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
     @transaction.atomic
     def create(self, request):
@@ -34,7 +43,9 @@ class CommentViewSet(viewsets.ViewSet):
                 question=Question.objects.get(request.data['question'])
             )
             comment.save()
-            return Response(comment, status=status.HTTP_200_OK)
+            data = CommentSerializer(comment).data
+            return Response(data, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response(e, status=status.HTTP_400_BAD_REQUEST)
+            logger.exception(f'Exception: {e}')
+            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
