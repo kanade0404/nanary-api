@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -8,6 +9,7 @@ class Category(models.Model):
     大分類を扱うモデル
     (ex: 工学、物理学、経済学、etc...)
     """
+    id = models.UUIDField(_('id'), primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(_('category_name'), max_length=50, unique=True)
 
     class Meta:
@@ -23,6 +25,7 @@ class CategoryTag(models.Model):
     カテゴリータグモデル
     カテゴリーモデルに紐付けるタグ
     """
+    id = models.UUIDField(_('id'), primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(_('category_tag_name'), max_length=50)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name=_('category name'))
 

@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -6,6 +7,7 @@ class Author(models.Model):
     """
     Author Model
     """
+    id = models.UUIDField(_('id'), primary_key=True, default=uuid.uuid4, editable=False)
     # Author name
     name = models.CharField(_('author_name'), max_length=100)
 

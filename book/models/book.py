@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from .publisher import Publisher
@@ -8,6 +9,7 @@ class Book(models.Model):
     """
     Book Model
     """
+    id = models.UUIDField(_('id'), primary_key=True, default=uuid.uuid4, editable=False)
     # book title
     title = models.CharField(_('book_title'), max_length=200)
     # ISBN Code(length is 10 or 13)
