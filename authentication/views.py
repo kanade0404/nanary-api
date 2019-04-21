@@ -11,7 +11,7 @@ from rest_framework.response import Response
 logger = getLogger(__name__)
 
 
-class AuthViewSet(viewsets.ViewSet):
+class AuthViewSet(viewsets.ModelViewSet):
     """
     Authentication ViewSet
     """
@@ -19,7 +19,7 @@ class AuthViewSet(viewsets.ViewSet):
     serializer_class = AuthSerializer
     filter_class = AuthFilter
 
-    def create(self, request):
+    def create(self, request, *args, **kwargs):
         try:
             user = User.objects.create_user(email=request.data['email'],
                                             password=request.data['password'],
@@ -29,6 +29,9 @@ class AuthViewSet(viewsets.ViewSet):
         except Exception as e:
             logger.exception(f'Exception: {e}')
             return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        pass
 
 
 class CustomAuthToken(ObtainAuthToken):

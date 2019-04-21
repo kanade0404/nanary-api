@@ -7,7 +7,7 @@ class Publisher(models.Model):
     """
     Publisher Model
     """
-    id = models.UUIDField(_('id'), primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(_('uuid'), db_index=True, default=uuid.uuid4, editable=False)
     # Publisher name
     name = models.CharField(_('publisher_name'), max_length=100)
 

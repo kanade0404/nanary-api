@@ -7,7 +7,7 @@ class Author(models.Model):
     """
     Author Model
     """
-    id = models.UUIDField(_('id'), primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(_('uuid'), db_index=True, default=uuid.uuid4, editable=False)
     # Author name
     name = models.CharField(_('author_name'), max_length=100)
 

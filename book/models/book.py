@@ -9,15 +9,15 @@ class Book(models.Model):
     """
     Book Model
     """
-    id = models.UUIDField(_('id'), primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(_('uuid'), db_index=True, default=uuid.uuid4, editable=False)
     # book title
     title = models.CharField(_('book_title'), max_length=200)
     # ISBN Code(length is 10 or 13)
     isbn = models.CharField(_('isbn'), unique=True, max_length=13)
     # publisher
-    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE, verbose_name=_('publisher name'))
+    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE, verbose_name=_('publisher'))
     # author
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name=_('author name'))
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name=_('author'))
     # book image
     cover = models.FileField(_('cover'), blank=True, max_length=255, upload_to='images/books/covers')
     # publish date(format:yyyyMM)

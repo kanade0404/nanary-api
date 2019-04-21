@@ -6,10 +6,10 @@ from users.models import User
 
 
 class Comment(models.Model):
-    id = models.UUIDField(_('id'), primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(_('uuid'), db_index=True, default=uuid.uuid4, editable=False)
     content = models.TextField(_('content'))
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name=_('question_id'))
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('user_id'))
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name=_('question'))
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('user'))
 
     class Meta:
         db_table = 'comments'

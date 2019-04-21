@@ -11,12 +11,15 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
-class QuestionViewSet(viewsets.ViewSet):
+class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = QuestionSerializer
 
-    def list(self, request):
+    class Meta:
+        lookup_field = 'uuid'
+
+    def list(self, request, *args, **kwargs):
         try:
             question = Question.objects.all().get()
             data = QuestionSerializer(question).data
@@ -25,7 +28,7 @@ class QuestionViewSet(viewsets.ViewSet):
             logger.exception(f'Exception: {e}')
             return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, pk=None, *args, **kwargs):
         try:
             question = Question.objects.get(pk=pk)
             serializer = QuestionSerializer(question)
@@ -34,7 +37,7 @@ class QuestionViewSet(viewsets.ViewSet):
             return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
     @transaction.atomic
-    def create(self, request):
+    def create(self, request, *args, **kwargs):
         try:
             question = Question(
                 title=request.data['title'],

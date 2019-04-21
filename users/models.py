@@ -63,7 +63,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     """
     ユーザーモデル
     """
-    id = models.UUIDField(_('id'), primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(_('uuid'), db_index=True, default=uuid.uuid4, editable=False)
     # Emailアドレス
     email = models.EmailField(_('email'), unique=True)
     # ユーザー名validator

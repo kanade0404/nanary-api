@@ -7,7 +7,7 @@ from .models.publisher import Publisher
 from .models.book import Book
 from .models.series import Series
 from .models.series_book import SeriesBook
-from book.serializers.book import BookManagementSerializer
+from book.serializers.book import BookManagementSerializer, BookSerializer
 from .openbd import OpenBD
 from .utils import BookUtil
 from common.db.exception import RegisterError
@@ -16,15 +16,44 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
-class BookManagementViewSet(viewsets.ViewSet):
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = Book.objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = BookSerializer
+
+    class Meta:
+        lookup_field = 'uuid'
+
+    def list(self, request, *args, **kwargs):
+        try:
+            book = Book.objects.all()
+            data = BookSerializer(book).data
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.exception(f'Exception: {e.args[0]}')
+            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk=None, *args, **kwargs):
+        pass
+
+    def create(self, request, *args, **kwargs):
+        pass
+
+
+class BookManagementViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = BookManagementSerializer
 
-    def list(self, request):
+    class Meta:
+        lookup_field = 'uuid'
+
+    def list(self, request, *args, **kwargs):
         """
         Find book info from OpenBD API by ISBN Code.
         :param request: ISBN Code
+        :param args:
+        :param kwargs:
         :return: book info(format:json)
         """
         try:
@@ -43,10 +72,12 @@ class BookManagementViewSet(viewsets.ViewSet):
             return Response({'error': e.args[0]}, status.HTTP_400_BAD_REQUEST)
 
     @transaction.atomic
-    def create(self, request):
+    def create(self, request, *args, **kwargs):
         """
         create book info
         :param request: book info
+        :param args:
+        :param kwargs:
         :return: The registered book info if successful. Otherwise an error message
         """
         try:

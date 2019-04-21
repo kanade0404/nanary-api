@@ -22,3 +22,8 @@ class AuthSerializer(serializers.ModelSerializer):
         return User.objects.create_user(email=validated_data['email'],
                                         password=validated_data['password'],
                                         username=validated_data['username'])
+
+    def update(self, instance, validated_data):
+        pass
+
+

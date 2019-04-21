@@ -10,13 +10,16 @@ from .filters import UserFilter
 logger = getLogger(__name__)
 
 
-class UserViewSet(viewsets.ViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter(is_active=True).order_by('-date_joined')
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
     filter_class = UserFilter
 
-    def list(self, request):
+    class Meta:
+        lookup_field = 'uuid'
+
+    def list(self, request, *args, **kwargs):
         try:
             users = User.objects.filter(is_active=True).order_by('-date_joined').get()
             data = UserSerializer(users).data
@@ -25,9 +28,9 @@ class UserViewSet(viewsets.ViewSet):
             logger.exception(f'Exception: {e}')
             return Response({'error': e.args}, status=status.HTTP_400_BAD_REQUEST)
 
-    def update(self, request):
+    def update(self, request, *args, **kwargs):
         try:
-            user = User.objects.get(pl=request.data['id'])
+            user = User.objects.get(pk=request.data['id'])
             if request.data['email']:
                 user.email = request.data['email']
             if request.data['username']:
