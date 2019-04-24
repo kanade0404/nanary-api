@@ -9,14 +9,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = CategorySerializer
 
-    class Meta:
-        lookup_field = 'uuid'
-
 
 class CategoryTagViewSet(viewsets.ModelViewSet):
     queryset = CategoryTag.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = CategoryTagSerializer
-
-    class Meta:
-        lookup_field = 'uuid'

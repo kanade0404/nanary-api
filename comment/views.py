@@ -17,9 +17,6 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentSerializer
 
-    class Meta:
-        lookup_field = 'uuid'
-
     def list(self, request, *args, **kwargs):
         try:
             comment = Comment.objects.all().get()

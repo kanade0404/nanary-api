@@ -21,9 +21,6 @@ class BookViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = BookSerializer
 
-    class Meta:
-        lookup_field = 'uuid'
-
     def list(self, request, *args, **kwargs):
         try:
             book = Book.objects.all()

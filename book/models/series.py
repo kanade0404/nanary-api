@@ -7,7 +7,7 @@ class Series(models.Model):
     """
     Series Model
     """
-    uuid = models.UUIDField(_('uuid'), db_index=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(_('id'), primary_key=True, default=uuid.uuid4, editable=False)
     # Series name
     name = models.CharField(_('series_name'), max_length=100)
 

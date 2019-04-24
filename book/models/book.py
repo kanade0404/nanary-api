@@ -9,7 +9,7 @@ class Book(models.Model):
     """
     Book Model
     """
-    uuid = models.UUIDField(_('uuid'), db_index=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(_('id'), primary_key=True, default=uuid.uuid4, editable=False)
     # book title
     title = models.CharField(_('book_title'), max_length=200)
     # ISBN Code(length is 10 or 13)
@@ -21,7 +21,7 @@ class Book(models.Model):
     # book image
     cover = models.FileField(_('cover'), blank=True, max_length=255, upload_to='images/books/covers')
     # publish date(format:yyyy-MM)
-    publish_date = models.CharField(_('publish_date'), blank=True, max_length=7)
+    publish_date = models.CharField(_('publish_date'), blank=True, max_length=7, default='')
 
     class Meta:
         db_table = 'books'

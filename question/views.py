@@ -16,9 +16,6 @@ class QuestionViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = QuestionSerializer
 
-    class Meta:
-        lookup_field = 'uuid'
-
     def list(self, request, *args, **kwargs):
         try:
             question = Question.objects.all().get()

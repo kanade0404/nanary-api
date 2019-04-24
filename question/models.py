@@ -6,7 +6,7 @@ from users.models import User
 
 
 class Question(models.Model):
-    uuid = models.UUIDField(_('uuid'), db_index=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(_('id'), primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(_('title'), max_length=100)
     content = models.TextField(_('content'))
     book = models.ForeignKey(Book, on_delete=models.CASCADE, verbose_name=_('book'))

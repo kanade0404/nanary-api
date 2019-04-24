@@ -16,9 +16,6 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     filter_class = UserFilter
 
-    class Meta:
-        lookup_field = 'uuid'
-
     def list(self, request, *args, **kwargs):
         try:
             users = User.objects.filter(is_active=True).order_by('-date_joined').get()
