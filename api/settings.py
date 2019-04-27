@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from decouple import config, Csv
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,10 +22,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'd*-ykp)&oihjn@(2(3a^!2&ce66lr8jio#)zkq%z95&4asqj#w'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -42,7 +44,6 @@ INSTALLED_APPS = [
     
     'corsheaders',
     'rest_framework',
-    'rest_framework.authtoken',
     'rest_framework_jwt',
     'django_filters',
 
@@ -126,8 +127,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-AUTH_USER_MODEL = 'users.User'
-
 SITE_ID = 1
 
 # Internationalization
@@ -148,24 +147,34 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+JWT_AUTH = {
+    'JWT_VERIFY_EXPIRATION': False,
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASS': (
         'rest_framework.permission.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
-    )
+    ),
+    'NON_FIELD_ERRORS_KEY': 'detail',
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'authentication.serializers.AuthSerializer',
 }
+
+AUTH_USER_MODEL = 'users.User'
+
 
 LOGGING = {
     'version': 1,
@@ -211,7 +220,7 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console', 'mail_admins'],
-            'level': 'DEBUG',
+            'level': 'INFO',
         },
         'django.server': {
             'handlers': ['django.server'],
