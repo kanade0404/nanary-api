@@ -19,7 +19,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            comment = Comment.objects.all().get()
+            comment = self.queryset.get()
             data = CommentSerializer(comment).data
             return Response(data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -29,7 +29,8 @@ class CommentViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None, *args, **kwargs):
         try:
             comment = Comment.objects.get(pk=pk)
-            return Response(comment, status=status.HTTP_200_OK)
+            data = CommentSerializer(comment).data
+            return Response(data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.exception(f'Exception: {e}')
             return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
@@ -37,10 +38,13 @@ class CommentViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         try:
+            serializer = CommentSerializer(data=request.data)
+            if not serializer.is_valid():
+                raise Exception(serializer.errors)
             comment = Comment(
-                content=request.data['content'],
-                user=User.objects.get(request.data['user']),
-                question=Question.objects.get(request.data['question'])
+                content=serializer.validated_data['content'],
+                user=User.objects.get(pk=int(serializer.validated_data['user'])),
+                question=Question.objects.get(pk=int(serializer.validated_data['question']))
             )
             comment.save()
             data = CommentSerializer(comment).data

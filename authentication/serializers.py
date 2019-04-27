@@ -6,6 +6,7 @@ class AuthSerializer(serializers.ModelSerializer):
     """
     Authentication Serializer
     """
+    display_username = serializers.CharField(required=False)
 
     class Meta:
         model = User
@@ -25,5 +26,3 @@ class AuthSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         pass
-
-

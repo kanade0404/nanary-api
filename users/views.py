@@ -16,22 +16,16 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     filter_class = UserFilter
 
-    def list(self, request, *args, **kwargs):
-        try:
-            users = User.objects.filter(is_active=True).order_by('-date_joined').get()
-            data = UserSerializer(users).data
-            return Response(data, status=status.HTTP_200_OK)
-        except Exception as e:
-            logger.exception(f'Exception: {e}')
-            return Response({'error': e.args}, status=status.HTTP_400_BAD_REQUEST)
-
     def update(self, request, *args, **kwargs):
         try:
+            serializer = UserSerializer(request.data)
+            if not serializer.is_valid():
+                raise Exception(serializer.errors)
             user = User.objects.get(pk=request.data['id'])
             if request.data['email']:
                 user.email = request.data['email']
-            if request.data['username']:
-                user.username = request.data['username']
+            if request.data['name']:
+                user.name = request.data['name']
             if request.data['display_username']:
                 user.display_username = request.data['display_username']
             if request.data['profile']:

@@ -41,4 +41,3 @@ class OpenBD:
         if response.status_code != 200:
             return {}
         return json.loads(response.text)
-

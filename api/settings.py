@@ -13,10 +13,12 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 from decouple import config, Csv
 import dj_database_url
+from datetime import datetime
+
+log_file_name = ''.join(str(datetime.now)[:10].split('-'))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -29,7 +31,6 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django_extensions',
-    
+
     'corsheaders',
     'rest_framework',
     'rest_framework_jwt',
@@ -93,7 +94,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'api.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
@@ -103,7 +103,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -142,7 +141,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
@@ -175,7 +173,6 @@ REST_AUTH_SERIALIZERS = {
 
 AUTH_USER_MODEL = 'users.User'
 
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -191,19 +188,25 @@ LOGGING = {
         'django.server': {
             '()': 'django.utils.log.ServerFormatter',
             'format': '[%(server_time)s] %(message)s a',
-        }
+        },
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
     },
     'handlers': {
         'console': {
             'level': 'DEBUG',
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
-            'formatter': 'django.server'
+            'formatter': 'simple'
         },
         'django.server': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'django.server',
+            'formatter': 'simple',
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -213,8 +216,8 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'log/debug.log'),
-            'formatter': 'django.server'
+            'filename': os.path.join(BASE_DIR, 'log/' + log_file_name + '.log'),
+            'formatter': 'simple'
         }
     },
     'loggers': {
@@ -228,26 +231,21 @@ LOGGING = {
             'propagate': False,
         },
         'django.db.backends': {
-            'handles': ['console'],
+            'handles': ['file'],
             'level': 'INFO'
         },
         'users': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        'dashboard': {
-            'handlers': ['console'],
+            'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': False,
         },
         'authentication': {
-            'handlers': ['console'],
+            'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': False,
         },
         'book': {
-            'handlers': ['console'],
+            'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': False
         },

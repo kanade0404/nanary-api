@@ -78,13 +78,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     # 表示用ユーザー名
     display_username = models.CharField(
         _('display_username'),
-        max_length=50,
-        blank=True
+        max_length=50
     )
     # プロフィール
     profile = models.CharField(_('profile'), blank=True, max_length=400)
     # アイコン画像
-    icon_image = models.URLField(blank=True)
+    icon_image = models.ImageField(blank=True, upload_to='icon')
     # スタッフフラグ
     is_staff = models.BooleanField(
         _('is_staff'),
@@ -112,7 +111,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # ユーザー名フィールド設定
     USERNAME_FIELD = 'email'
     # 必須フィールド設定
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
     objects = UserManager()
 
