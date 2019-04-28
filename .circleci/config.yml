@@ -1,0 +1,45 @@
+version: 2  # CircleCIのversion
+# 実行単位であるjobを束ねるセクション
+jobs:
+  # リポジトリへのPushがトリガーとなって実行されるデフォルトのjob
+  build:
+   # stepsを実行するDocker環境の指定
+    docker:
+      - image: circleci/python:3.7
+    # stepsを実行するディレクトリ
+    working_directory: ~/repo
+    # ビルドステップを束ねるセクション
+    steps:
+      # working_directoryにソースコードをチェックアウト
+      - checkout
+      # keyをもとにcacheを取得
+      - restore_cache:
+        keys:
+          - v1-dependencies-{{checksum"requirements.txt"}}
+          - v1-dependencies-
+      # 実行するコマンドを指定
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            .venv/bin/activate
+            pip install -r requirements.txt
+      # keyを指定してcacheを保存
+      - save_cache:
+          paths:
+            - .venv
+            - key: v1-dependencites-{{checksum"requirements.txt"}}
+      - run:
+          name: run migrate
+          command: |
+            .venv/bin/activate
+            python manage.py migrate --settings=api.settings.base
+      - run:
+          name: run tests
+          command: |
+            .venv/bin/activate
+            python manage.py test
+      # coverage reportやbinaryなどjobの成果物を保存
+      - store_artifacts:
+        path: test-reports
+        destination: test-reports
