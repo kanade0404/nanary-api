@@ -9,7 +9,6 @@ from .models.series import Series
 from .models.series_book import SeriesBook
 from book.serializers.book import BookManagementSerializer, BookSerializer
 from .openbd import OpenBD
-from .utils import BookUtil
 from common.db.exception import RegisterError
 from logging import getLogger
 
@@ -86,9 +85,6 @@ class BookManagementViewSet(viewsets.ModelViewSet):
         :return: The registered book info if successful. Otherwise an error message
         """
         try:
-            # serializer = BookManagementSerializer(data=request.data)
-            # if not serializer.is_valid():
-            #     raise Exception(serializer.errors)
             # is_create_*** is True if request.data has not been registered yet.
             # is_create_*** is False unless request.data has been registered.
             publisher, is_create_publisher = Publisher.objects.get_or_create(name=request.data['publisher'])

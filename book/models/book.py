@@ -19,7 +19,7 @@ class Book(models.Model):
     # author
     author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name=_('author'))
     # book image
-    cover = models.FileField(_('cover'), blank=True, max_length=255, upload_to='images/books/covers')
+    cover = models.ImageField(_('cover'), blank=True, upload_to='cover')
     # publish date(format:yyyy-MM)
     publish_date = models.CharField(_('publish_date'), blank=True, max_length=7, default='')
 

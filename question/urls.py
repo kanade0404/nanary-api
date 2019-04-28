@@ -5,6 +5,7 @@ from .views import QuestionViewSet
 router = routers.DefaultRouter()
 router.register('', QuestionViewSet)
 
+
 urlpatterns = [
-    path('question/', include(router.urls))
+    path('question/', include(router.urls)),
 ]
