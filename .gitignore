@@ -197,3 +197,6 @@ venv.bak/
 .idea/*.iml
 
 /**/migrations/
+/api/settings/dev.py
+images/books/
+requirements.txt
