@@ -1,28 +1,33 @@
 from users.models import User
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
+from users.validators import UsernameValidator
 
 
 class AuthSerializer(serializers.ModelSerializer):
     """
     Authentication Serializer
     """
+    username = serializers.CharField(max_length=50, validators=[
+        UniqueValidator(queryset=User.objects.all())])
+    email = serializers.EmailField(max_length=255)
+    password = serializers.CharField(min_length=8, read_only=True)
     display_username = serializers.CharField(required=False)
+    icon_image = serializers.ImageField(required=False)
+    profile = serializers.CharField(required=False)
 
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'password', 'display_username',
                   'icon_image', 'profile')
-        extra_kwargs = {'password': {'write_only': True, 'required': True}}
-
-    def create(self, validated_data):
-        """
-        Sign up
-        :param validated_data: a user info
-        :return: a new user info
-        """
-        return User.objects.create_user(email=validated_data['email'],
-                                        password=validated_data['password'],
-                                        username=validated_data['username'])
-
-    def update(self, instance, validated_data):
-        pass
+        extra_kwargs = {
+            'username': {
+                'error_messages': {'blank': 'ユーザー名は必須です。'}
+            },
+            'email': {
+                'error_messages': {'blank': 'メールアドレスは必須です。'}
+            },
+            'password': {
+                'error_messages': {'blank': 'パスワードは必須です。'}
+            }
+        }

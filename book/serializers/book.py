@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 from book.models.book import Book
 from .publisher import PublisherSerializer
 from .author import AuthorSerializer
@@ -14,6 +15,7 @@ class BookManagementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ('title', 'isbn', 'cover', 'publisher', 'author', 'publish_date')
+
 
 
 class BookSerializer(serializers.ModelSerializer):
