@@ -15,7 +15,6 @@ from decouple import config, Csv
 import dj_database_url
 from datetime import datetime
 
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -163,7 +162,16 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
     'NON_FIELD_ERRORS_KEY': 'detail',
-    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_THROTTLE_CLASSES': {
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    },
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '10/m',
+        'user': '1000/h'
+    },
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
 }
 
 REST_AUTH_SERIALIZERS = {
