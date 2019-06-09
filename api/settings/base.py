@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os, sys
 from decouple import config, Csv
 import dj_database_url
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -43,8 +43,8 @@ INSTALLED_APPS = [
 
     'corsheaders',
     'rest_framework',
-    'rest_framework_jwt',
     'django_filters',
+    'rest_framework_swagger',
 
     'users.apps.UserConfig',
     'authentication.apps.AuthConfig',
@@ -67,7 +67,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-ROOT_URLCONF = 'api.urls'
+ROOT_URLCONF = 'api.urls.base'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -76,8 +76,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -98,7 +97,7 @@ WSGI_APPLICATION = 'api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, '../../db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -146,17 +145,12 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '../../media')
 MEDIA_URL = '/media/'
 
-JWT_AUTH = {
-    'JWT_VERIFY_EXPIRATION': False,
-    'JWT_AUTH_HEADER_PREFIX': 'JWT',
-}
-
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASS': (
+    'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permission.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
@@ -174,11 +168,20 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
 }
 
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'authentication.serializers.AuthSerializer',
 }
 
-AUTH_USER_MODEL = 'users.User'
+SOCIAL_AUTH_GITHUB_KEY = config('SOCIAL_AUTH_GITHUB_KEY', '')
+SOCIAL_AUTH_GITHUB_SECRET = config('SOCIAL_AUTH_GITHUB_SECRET', '')
+
+AUTH_USER_MODEL = 'api.users.User'
 
 LOGGING = {
     'version': 1,

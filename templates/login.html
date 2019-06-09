@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LOGIN</title>
+</head>
+<body>
+<h1>Django Allauth Tutorial</h1>
+{% if user.authenticated %}
+    <h2>{{ user }}</h2>
+{% endif %}
+<a href="/account/github/login">Sign Up</a>
+</body>
+</html>

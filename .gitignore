@@ -193,7 +193,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-.idea/*.xml
+.idea/**/*.xml
 .idea/*.iml
 
 /**/migrations/
