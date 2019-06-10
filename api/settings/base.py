@@ -157,13 +157,13 @@ REST_FRAMEWORK = {
     ),
     'NON_FIELD_ERRORS_KEY': 'detail',
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
-    'DEFAULT_THROTTLE_CLASSES': {
+    'DEFAULT_THROTTLE_CLASSES': (
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle',
-    },
+    ),
     'DEFAULT_THROTTLE_RATES': {
         'anon': '10/m',
-        'user': '1000/h'
+        'user': '1000/h',
     },
     'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
 }
