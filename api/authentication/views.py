@@ -21,10 +21,16 @@ class AuthAPIView(generics.CreateAPIView):
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         try:
-            serializer = AuthSerializer(data=request.data)
+            serializer = AuthSerializer(instance=request.data)
             if not serializer.is_valid():
                 raise Exception(serializer.errors)
-            serializer.save()
+            data = serializer.validated_data
+            user = User.objects.create_user(
+                email=request.data['email'],
+                password=request.data['password'],
+                username=request.data['username']
+            )
+            serializer = AuthSerializer(instance=user)
             return Response(serializer.data, status=HTTP_201_CREATED)
         except Exception as e:
             logger.exception('Exception')
