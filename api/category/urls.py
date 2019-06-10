@@ -7,5 +7,5 @@ router.register('', CategoryViewSet)
 router.register('tag', CategoryTagViewSet)
 
 urlpatterns = [
-    path('category/', include(router.urls)),
+    path('', include(router.urls)),
 ]

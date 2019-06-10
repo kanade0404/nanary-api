@@ -1,6 +1,7 @@
 from logging import getLogger
 from django.utils import timezone
-from rest_framework import viewsets, status
+from rest_framework import viewsets
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .models import User
@@ -15,6 +16,37 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
     filter_class = UserFilter
+
+    def list(self, request, *args, **kwargs):
+        try:
+            serializer = self.serializer_class(request.data)
+            if not serializer.is_valid():
+                raise Exception(serializer.errors)
+            user = self.queryset.get()
+            serializer = self.serializer_class(user)
+            return Response(serializer.data, HTTP_200_OK)
+        except Exception as e:
+            logger.exception(e)
+            return Response({'error': e.args[0]}, HTTP_400_BAD_REQUEST)
+
+
+class UserDetailViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserSerializer
+    filter_class = UserFilter
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            serializer = self.serializer_class(request.data)
+            if not serializer.is_valid():
+                raise Exception(serializer.errors)
+            user = self.queryset.get(pk=request.data['id'])
+            serializer = self.serializer_class(user)
+            return Response(serializer.data, HTTP_200_OK)
+        except Exception as e:
+            logger.exception(f'Exception: {e}')
+            return Response({'error': e.args[0]}, status=HTTP_400_BAD_REQUEST)
 
     def update(self, request, *args, **kwargs):
         try:
@@ -35,7 +67,7 @@ class UserViewSet(viewsets.ModelViewSet):
             user.date_updated = timezone.now
             user.save()
             data = UserSerializer(user).data
-            return Response(data, status=status.HTTP_200_OK)
+            return Response(data, status=HTTP_200_OK)
         except Exception as e:
             logger.exception(f'Exception: {e}')
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': e.args[0]}, status=HTTP_400_BAD_REQUEST)
