@@ -46,12 +46,12 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework_swagger',
 
-    'users.apps.UserConfig',
-    'authentication.apps.AuthConfig',
-    'book.apps.BookConfig',
-    'category.apps.CategoryConfig',
-    'comment.apps.CommentConfig',
-    'question.apps.QuestionConfig',
+    'api.users.apps.UserConfig',
+    'api.authentication.apps.AuthConfig',
+    'api.book.apps.BookConfig',
+    'api.category.apps.CategoryConfig',
+    'api.comment.apps.CommentConfig',
+    'api.question.apps.QuestionConfig',
 ]
 
 MIDDLEWARE = [
@@ -147,7 +147,7 @@ MEDIA_URL = '/media/'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permission.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -181,7 +181,7 @@ REST_AUTH_SERIALIZERS = {
 SOCIAL_AUTH_GITHUB_KEY = config('SOCIAL_AUTH_GITHUB_KEY', '')
 SOCIAL_AUTH_GITHUB_SECRET = config('SOCIAL_AUTH_GITHUB_SECRET', '')
 
-AUTH_USER_MODEL = 'api.users.User'
+AUTH_USER_MODEL = 'users.User'
 
 LOGGING = {
     'version': 1,
@@ -226,7 +226,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'log/{}.log'.format(''.join(str(datetime.now)[:10].split('-')))),
+            'filename': os.path.join(BASE_DIR, 'log/{}.log'.format(str(datetime.now))),
             'formatter': 'simple'
         }
     },
