@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os, sys
 from decouple import config, Csv
 import dj_database_url
-from datetime import datetime, timedelta
+from datetime import timedelta, date
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -226,7 +226,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'log/{}.log'.format(str(datetime.now))),
+            'filename': os.path.join(BASE_DIR, 'log/{}.log'.format(str(date.today()))),
             'formatter': 'simple'
         }
     },
@@ -242,7 +242,7 @@ LOGGING = {
         },
         'django.db.backends': {
             'handles': ['file'],
-            'level': 'INFO'
+            'level': 'DEBUG'
         },
         'users': {
             'handlers': ['file'],
