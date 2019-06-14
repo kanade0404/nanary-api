@@ -3,7 +3,7 @@ from django.db import transaction
 from .serializers import AuthSerializer
 from api.users.models import User
 from rest_framework import generics
-from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED,HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_201_CREATED,HTTP_400_BAD_REQUEST
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 
@@ -20,18 +20,23 @@ class AuthAPIView(generics.CreateAPIView):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
+        """
+        TODO
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
         try:
-            serializer = AuthSerializer(instance=request.data)
+            serializer = AuthSerializer(data=request.data)
             if not serializer.is_valid():
-                raise Exception(serializer.errors)
-            data = serializer.validated_data
-            user = User.objects.create_user(
-                email=request.data['email'],
-                password=request.data['password'],
-                username=request.data['username']
-            )
-            serializer = AuthSerializer(instance=user)
+                raise ValueError(serializer.errors)
+            user = serializer.save()
+            serializer = AuthSerializer(data=user)
+            logger.info('Success AuthAPIView')
+            logger.info(serializer.data)
             return Response(serializer.data, status=HTTP_201_CREATED)
         except Exception as e:
-            logger.exception('Exception')
+            logger.error('Exception AuthAPIView')
+            logger.error(e)
             return Response({'error': e.args[0]}, status=HTTP_400_BAD_REQUEST)

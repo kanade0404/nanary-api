@@ -199,4 +199,3 @@ venv.bak/
 /**/migrations/
 /api/settings/dev.py
 images/books/
-requirements.txt

@@ -10,7 +10,7 @@ class AuthSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=50, validators=[
         UniqueValidator(queryset=User.objects.all())])
     email = serializers.EmailField(max_length=255)
-    password = serializers.CharField(min_length=8, read_only=True)
+    password = serializers.CharField(min_length=8)
     display_username = serializers.CharField(required=False)
     icon_image = serializers.ImageField(required=False)
     profile = serializers.CharField(required=False)
@@ -30,3 +30,11 @@ class AuthSerializer(serializers.ModelSerializer):
                 'error_messages': {'blank': 'パスワードは必須です。'}
             }
         }
+
+    def create(self, validated_data):
+        return User.objects.create_user(
+            email=validated_data['email'],
+            password=validated_data['password'],
+            username=validated_data['username']
+        )
+
