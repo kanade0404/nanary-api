@@ -14,32 +14,27 @@ jobs:
       - checkout
       # keyをもとにcacheを取得
       - restore_cache:
-        keys:
-          - v1-dependencies-{{checksum"requirements.txt"}}
-          - v1-dependencies-
+         keys: v1-dependencies-{{ checksum "requirements.txt" }}
       # 実行するコマンドを指定
       - run:
           name: install dependencies
           command: |
             python3 -m venv venv
-            .venv/bin/activate
+            . venv/bin/activate
+            pip install --upgrade pip
             pip install -r requirements.txt
       # keyを指定してcacheを保存
-      - save_cache:
-          paths:
-            - .venv
-            - key: v1-dependencites-{{checksum"requirements.txt"}}
-      - run:
-          name: run migrate
-          command: |
-            .venv/bin/activate
-            python manage.py migrate --settings=api.settings.base
-      - run:
-          name: run tests
-          command: |
-            .venv/bin/activate
-            python manage.py test
-      # coverage reportやbinaryなどjobの成果物を保存
-      - store_artifacts:
-        path: test-reports
-        destination: test-reports
+#      - save_cache:
+#          paths:
+#            - ./venv
+#          key: v1-dependencies-{{ checksum "requirements.txt" }}
+#      - run:
+#          name: run migrate
+#          command: |
+#            . venv/bin/activate
+#            python manage.py migrate --settings=api.settings.base
+#      - run:
+#          name: run tests
+#          command: |
+#            . venv/bin/activate
+#            python manage.py test

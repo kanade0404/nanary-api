@@ -19,11 +19,11 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            serializer = self.serializer_class(request.data)
+            serializer = UserSerializer(data=request.data)
             if not serializer.is_valid():
                 raise Exception(serializer.errors)
             user = self.queryset.get()
-            serializer = self.serializer_class(user)
+            serializer = UserSerializer(data=user)
             return Response(serializer.data, HTTP_200_OK)
         except Exception as e:
             logger.exception(e)

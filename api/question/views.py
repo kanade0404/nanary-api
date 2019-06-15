@@ -4,8 +4,6 @@ from rest_framework.permissions import IsAuthenticated
 from django.db import transaction
 from .models import Question
 from .serializers import QuestionSerializer
-from api.book.models.book import Book
-from api.users.models import User
 from logging import getLogger
 
 logger = getLogger(__name__)
@@ -18,16 +16,19 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            question = Question.objects.all().get()
-            data = QuestionSerializer(question).data
-            return Response(data, status=status.HTTP_200_OK)
+            question = self.queryset
+            serializer = QuestionSerializer(question)
+            logger.info('Success QuestionViewSet.list')
+            logger.info(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.exception(f'Exception: {e}')
+            logger.error('Exception QuestionViewSet.list')
+            logger.error(e)
             return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None, *args, **kwargs):
         try:
-            question = Question.objects.get(pk=pk)
+            question = self.queryset.get(pk=pk)
             serializer = QuestionSerializer(question)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -36,15 +37,12 @@ class QuestionViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         try:
-            question = Question(
-                title=request.data['title'],
-                content=request.data['content'],
-                book=Book.objects.get(pk=int(request.data['book'])),
-                user=User.objects.get(pk=int(request.data['user']))
-            )
-            question.save()
+            serializer = QuestionSerializer(data=request.data)
+            if not serializer.is_valid():
+                raise ValueError(serializer.errors)
+            question = QuestionSerializer(data=serializer.validated_data)
             serializer = QuestionSerializer(question)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
             logger.exception(f'Exception: {e}')
             return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)

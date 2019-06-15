@@ -102,7 +102,7 @@ class BookManagementView(ListCreateAPIView):
             if not serializer.is_valid():
                 raise ValueError(serializer.errors)
             # Publisher
-            publisher_serializer = PublisherSerializer(data=serializer.validated_data)
+            publisher_serializer = PublisherSerializer(data={''})
             publisher_serializer.save()
             # Author
             author_serializer = AuthorSerializer(data=serializer.validated_data)
@@ -124,3 +124,4 @@ class BookManagementView(ListCreateAPIView):
             logger.error('Exception BookManageViewSet.create')
             logger.error(e)
             return Response(data={'error': e.args[0]}, status=HTTP_400_BAD_REQUEST)
+
